@@ -2,229 +2,277 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>AethonMC | Network Minecraft</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>AethonMC | Official Store & Network</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg: #0d0a07;
-      --panel: #1a140d;
-      --accent: #f59e0b; /* Oro */
-      --accent2: #d97706; /* Bronzo */
-      --text: #fffbeb;
-      --muted: #a3a3a3;
-      --cyan: #06b6d4; /* Azzurro spada */
+      --bg: #0a0a0a;
+      --card-bg: #141414;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.3);
+      --text-main: #ffffff;
+      --text-dim: #a1a1aa;
+      --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-    
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: radial-gradient(circle at top, #2d1e05, var(--bg));
-      color: var(--text);
-      line-height: 1.6;
-      scroll-behavior: smooth;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.5;
     }
 
+    /* Background Animation */
+    .bg-glow {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% -20%, #2d1e05 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    /* Navbar */
     nav {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 1rem 5%;
+      align-items: center;
+      padding: 1.5rem 10%;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(15px);
       position: sticky;
       top: 0;
-      background: rgba(13, 10, 7, 0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
       z-index: 1000;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    nav img { height: 50px; }
+    .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: var(--accent); }
     .nav-links a {
-      margin-left: 2rem;
+      color: var(--text-dim);
       text-decoration: none;
-      color: var(--text);
-      font-weight: 700;
-      text-transform: uppercase;
+      margin-left: 2.5rem;
+      font-weight: 600;
+      transition: 0.3s;
       font-size: 0.9rem;
+      text-transform: uppercase;
     }
+    .nav-links a:hover { color: var(--accent); }
 
-    .btn {
-      display: inline-block;
-      padding: 0.8rem 1.8rem;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #000 !important;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 4px 20px rgba(217, 119, 6, 0.4);
-      transition: transform 0.2s;
-    }
-    .btn:hover { transform: translateY(-2px); }
-
+    /* Hero Section */
     .hero {
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      padding: 8rem 2rem 4rem;
+      padding: 0 1rem;
     }
     .hero h1 {
-      font-size: clamp(3.5rem, 10vw, 5.5rem);
-      font-weight: 900;
-      text-transform: uppercase;
-      background: linear-gradient(to bottom, #fff, var(--accent));
+      font-size: clamp(3rem, 12vw, 6rem);
+      line-height: 0.9;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to bottom, #fff 40%, var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 30px var(--accent-glow));
     }
 
-    /* Sezione Store Aggiornata */
-    .store-section {
-      max-width: 1200px;
-      margin: 4rem auto;
-      padding: 0 2rem;
+    /* Store Section */
+    .section-title {
       text-align: center;
+      margin-bottom: 4rem;
     }
-    .store-grid {
+    .section-title h2 { font-size: 2.5rem; text-transform: uppercase; }
+    .section-title p { color: var(--text-dim); }
+
+    .store-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
-      margin-top: 3rem;
+      padding: 0 10% 5rem;
     }
+
     .package-card {
-      background: var(--panel);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      padding: 2rem;
-      border-radius: 15px;
-      transition: 0.3s;
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 24px;
+      padding: 2.5rem;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
     }
     .package-card:hover {
+      transform: translateY(-10px);
       border-color: var(--accent);
-      transform: scale(1.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
-    .package-card h3 { color: var(--accent); margin-bottom: 1rem; font-size: 1.5rem; }
-    .price { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+    .package-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 4px;
+      background: var(--gold-gradient);
+    }
+    .rank-name { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .price { font-size: 2.5rem; font-weight: 900; color: var(--accent); margin-bottom: 2rem; }
+    .features { list-style: none; margin-bottom: 2.5rem; text-align: left; }
+    .features li { margin-bottom: 1rem; color: var(--text-dim); display: flex; align-items: center; }
+    .features li i { color: var(--accent); margin-right: 10px; }
 
-    /* Sezione Staff Aggiornata */
+    .btn-buy {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: var(--gold-gradient);
+      color: #000;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    /* Staff Section */
+    .staff-section { padding: 5rem 10%; background: #080808; }
     .staff-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      max-width: 1100px;
-      margin: 4rem auto;
-      padding: 0 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
     }
-    .staff-card {
-      background: rgba(255,255,255,0.03);
-      border-left: 4px solid var(--accent);
-      padding: 2rem;
-      border-radius: 10px;
-    }
-    .role { color: var(--accent); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-
-    .join {
-      max-width: 600px;
-      margin: 0 auto 6rem;
-      background: var(--panel);
-      border: 2px solid var(--accent);
+    .staff-member {
+      background: rgba(255,255,255,0.02);
+      padding: 1.5rem;
       border-radius: 15px;
-      padding: 2rem;
+      border: 1px solid rgba(255,255,255,0.05);
       text-align: center;
-      cursor: pointer;
     }
-    .ip { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+    .staff-member .role {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
 
-    footer { padding: 4rem; text-align: center; color: var(--muted); border-top: 1px solid rgba(255,255,255,0.05); }
+    /* IP Copy */
+    .ip-box {
+      background: var(--card-bg);
+      padding: 1.5rem 3rem;
+      border-radius: 100px;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 2rem;
+      transition: 0.3s;
+    }
+    .ip-box:hover { background: rgba(245, 158, 11, 0.1); }
+
+    footer { padding: 4rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-dim); }
   </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <nav>
-  <img src="logo.png" alt="AethonMC">
+  <div class="logo">AETHON<span style="color:#fff">MC</span></div>
   <div class="nav-links">
     <a href="#home">Home</a>
     <a href="#store">Store</a>
     <a href="#staff">Staff</a>
-    <a href="#join" class="btn">Gioca Ora</a>
+    <a href="https://discord.gg/TUO_LINK" style="color: #5865F2;"><i class="fab fa-discord"></i> Discord</a>
   </div>
 </nav>
 
 <section class="hero" id="home">
-  <h1>AethonMC</h1>
-  <p style="color:var(--muted); font-size: 1.3rem;">Il dominio è una scelta. La sopravvivenza è un obbligo.</p>
-</section>
-
-<section class="join" id="join" onclick="copyIP()">
-  <p style="text-transform: uppercase; font-weight: bold; margin-bottom: 0.5rem;">Clicca per copiare l'IP</p>
-  <div class="ip" id="serverIP">AETHONMC.<span>FALIXSRV.ME</span></div>
+  <h1>DOMINA IL<br>NETWORK</h1>
+  <p style="color: var(--text-dim); max-width: 600px; font-size: 1.1rem;">Entra nell'arena competitiva di AethonMC. Sopravvivi, combatti e scala le classifiche nel network definitivo.</p>
+  
+  <div class="ip-box" onclick="copyIP()">
+    <i class="fas fa-copy" style="color: var(--accent)"></i>
+    <span id="serverIP" style="font-weight: 700; letter-spacing: 1px;">AETHONMC.FALIXSRV.ME</span>
+  </div>
 </section>
 
 <section class="store-section" id="store">
-  <h2 style="font-size: 3rem; color: var(--accent);">OFFICIAL STORE</h2>
-  <p style="color: var(--muted);">Sostieni il server e potenzia la tua esperienza</p>
-  
-  <div class="store-grid">
+  <div class="section-title">
+    <h2>Negozio Ufficiale</h2>
+    <p>Sostieni lo sviluppo del server e ottieni vantaggi unici</p>
+  </div>
+
+  <div class="store-container">
     <div class="package-card">
-      <span class="role">Mensile</span>
-      <h3>RANK VIP</h3>
+      <div class="rank-name">VIP</div>
       <div class="price">€4.99</div>
-      <ul style="list-style:none; margin-bottom: 2rem; color: var(--muted);">
-        <li>Tag [VIP] nel Nick</li>
-        <li>Accesso alle Code Prioritarie</li>
-        <li>Kit VIP Esclusivo</li>
+      <ul class="features">
+        <li><i class="fas fa-check"></i> Prefisso [VIP]</li>
+        <li><i class="fas fa-check"></i> Ingresso Slot Riservati</li>
+        <li><i class="fas fa-check"></i> Kit VIP Giornaliero</li>
+        <li><i class="fas fa-check"></i> Colore Chat Giallo</li>
       </ul>
-      <a href="#" class="btn">Acquista</a>
+      <a href="https://tuo-store.tebex.io/checkout/..." class="btn-buy">Acquista Ora</a>
     </div>
 
-    <div class="package-card" style="border-color: var(--accent); background: rgba(245, 158, 11, 0.05);">
-      <span class="role">Il più scelto</span>
-      <h3>RANK ELITE</h3>
-      <div class="price">€9.99</div>
-      <ul style="list-style:none; margin-bottom: 2rem; color: var(--muted);">
-        <li>Tutti i vantaggi VIP</li>
-        <li>+5 Cuori Extra</li>
-        <li>Comando /fly in Lobby</li>
+    <div class="package-card" style="border-color: var(--accent); transform: scale(1.05); background: #1a160f;">
+      <div style="position:absolute; top:10px; right:20px; font-size:0.7rem; background:var(--accent); color:#000; padding:2px 10px; border-radius:10px; font-weight:800;">POPOLARE</div>
+      <div class="rank-name">ELITE</div>
+      <div class="price">€14.99</div>
+      <ul class="features">
+        <li><i class="fas fa-check"></i> Tutti i vantaggi VIP</li>
+        <li><i class="fas fa-check"></i> +5 Cuori Permanenti</li>
+        <li><i class="fas fa-check"></i> /fly nella Lobby</li>
+        <li><i class="fas fa-check"></i> Kit Elite Leggendario</li>
       </ul>
-      <a href="#" class="btn">Acquista</a>
+      <a href="https://tuo-store.tebex.io/checkout/..." class="btn-buy">Acquista Ora</a>
     </div>
 
     <div class="package-card">
-      <span class="role">Pacchetto</span>
-      <h3>COINS BUNDLE</h3>
-      <div class="price">€2.50</div>
-      <ul style="list-style:none; margin-bottom: 2rem; color: var(--muted);">
-        <li>5000 Aethon Coins</li>
-        <li>Usabili nello Shop In-Game</li>
-        <li>Bonus 1 Key Cassa Rara</li>
+      <div class="rank-name">AETHON</div>
+      <div class="price">€29.99</div>
+      <ul class="features">
+        <li><i class="fas fa-check"></i> Grado Massimo</li>
+        <li><i class="fas fa-check"></i> Messaggio d'ingresso Custom</li>
+        <li><i class="fas fa-check"></i> Priorità Assoluta Supporto</li>
+        <li><i class="fas fa-check"></i> Nick Colorato Animato</li>
       </ul>
-      <a href="#" class="btn">Acquista</a>
+      <a href="https://tuo-store.tebex.io/checkout/..." class="btn-buy">Acquista Ora</a>
     </div>
   </div>
 </section>
 
-<section id="staff">
-  <h2 style="text-align:center; font-size: 2.5rem; margin-top: 6rem;">Il Nostro Team</h2>
+<section class="staff-section" id="staff">
+  <div class="section-title">
+    <h2>Il Nostro Team</h2>
+  </div>
   <div class="staff-grid">
-    <div class="staff-card"><span class="role">Founder & CEO</span><h3>NumberDuck95471</h3></div>
-    <div class="staff-card"><span class="role">Founder</span><h3>Congiunzione</h3></div>
-    <div class="staff-card"><span class="role">Founder</span><h3>mirkolend</h3></div>
-    <div class="staff-card"><span class="role">Owner</span><h3>SALVX_30052</h3></div>
-    <div class="staff-card"><span class="role">Sr. Admin</span><h3>fanzey1</h3></div>
-    <div class="staff-card"><span class="role">Admin</span><h3>lorepro</h3></div>
-    <div class="staff-card"><span class="role">Sr. Helper</span><h3>Mohamed13bit</h3></div>
+    <div class="staff-member"><span class="role">Founder & CEO</span><h3>NumberDuck95471</h3></div>
+    <div class="staff-member"><span class="role">Founder</span><h3>Congiunzione</h3></div>
+    <div class="staff-member"><span class="role">Founder</span><h3>mirkolend</h3></div>
+    <div class="staff-member"><span class="role">Owner</span><h3>SALVX_30052</h3></div>
+    <div class="staff-member"><span class="role">Sr. Admin</span><h3>fanzey1</h3></div>
+    <div class="staff-member"><span class="role">Admin</span><h3>lorepro</h3></div>
+    <div class="staff-member"><span class="role">Sr. Helper</span><h3>Mohamed13bit</h3></div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 AethonMC Network — Domina il campo di battaglia.</p>
+  <p>© 2026 AethonMC Network. Non affiliato con Mojang AB.</p>
 </footer>
 
 <script>
   function copyIP(){
     const ip = "aethonmc.falixsrv.me";
     navigator.clipboard.writeText(ip);
-    const ipDiv = document.getElementById('serverIP');
-    const old = ipDiv.innerHTML;
-    ipDiv.innerHTML = "IP COPIATO!";
-    ipDiv.style.color = "var(--cyan)";
+    const ipText = document.getElementById('serverIP');
+    const original = ipText.innerText;
+    ipText.innerText = "IP COPIATO CON SUCCESSO!";
+    ipText.style.color = "#4ade80";
     setTimeout(() => {
-      ipDiv.innerHTML = old;
-      ipDiv.style.color = "var(--accent)";
+      ipText.innerText = original;
+      ipText.style.color = "inherit";
     }, 2000);
   }
 </script>
