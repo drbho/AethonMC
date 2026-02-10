@@ -35,83 +35,57 @@
             box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.15); 
         }
 
-        .sidebar-btn {
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .sidebar-btn:hover {
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        /* Scrollbar stilizzata */
+        /* Scrollbar Custom */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030712; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #10b981; }
 
-        pre, code, textarea { font-family: 'Fira Code', monospace !important; }
+        pre, textarea, code { font-family: 'Fira Code', monospace !important; }
+        
+        .active-nav { color: #10b981; background: rgba(16, 185, 129, 0.1); }
     </style>
 </head>
 <body class="min-h-screen">
 
     <aside class="fixed left-0 top-0 h-full w-20 glass flex flex-col items-center py-8 space-y-10 z-50">
-        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-            <img src="logo.png" alt="DevHub Logo" class="w-9 h-9 object-contain hover:scale-110 transition-transform duration-300">
+        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30">
+            <img src="logo.png" alt="DevHub Logo" class="w-9 h-9 object-contain">
         </div>
         
         <nav class="flex flex-col space-y-4">
-            <button onclick="showSection('grid')" class="sidebar-btn p-3 rounded-xl text-slate-400" title="Tutti i Tool">
+            <button onclick="showSection('grid')" id="btn-grid" class="p-3 rounded-xl text-slate-400 hover:text-emerald-500 transition-all active-nav">
                 <i data-lucide="layout-grid"></i>
             </button>
-            <button onclick="showSection('favs')" class="sidebar-btn p-3 rounded-xl text-slate-400 hover:text-yellow-500" title="Preferiti">
+            <button onclick="showSection('favs')" id="btn-favs" class="p-3 rounded-xl text-slate-400 hover:text-yellow-500 transition-all">
                 <i data-lucide="star"></i>
             </button>
         </nav>
-
-        <div class="mt-auto">
-            <button class="sidebar-btn p-3 rounded-xl text-slate-500 hover:text-white">
-                <i data-lucide="settings"></i>
-            </button>
-        </div>
     </aside>
 
     <main class="pl-28 pt-12 pr-10 pb-20">
         <header class="mb-16">
             <div class="flex items-center gap-4">
                 <h1 class="text-6xl font-extrabold tracking-tighter italic">DevHub <span class="text-emerald-500 not-italic">OS</span></h1>
-                <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full text-xs font-bold tracking-widest uppercase">v1.0 Beta</span>
+                <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full text-xs font-bold uppercase tracking-widest">v1.2</span>
             </div>
-            <p id="view-title" class="text-slate-500 mt-4 text-xl font-light">Strumenti di engineering 100% client-side.</p>
+            <p id="view-title" class="text-slate-500 mt-4 text-xl">Engineering suite 100% client-side.</p>
         </header>
 
         <section id="section-grid">
             <div id="mainGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                <div class="col-span-full py-20 text-center animate-pulse text-slate-600 font-mono italic">
-                    Inizializzazione moduli di sistema...
                 </div>
-            </div>
         </section>
 
-        <section id="section-tool" class="hidden max-w-6xl mx-auto">
-            <button onclick="showSection('grid')" class="group mb-8 flex items-center gap-3 text-slate-400 hover:text-emerald-500 transition-all font-semibold">
-                <i data-lucide="chevron-left" class="group-hover:-translate-x-1 transition-transform"></i> 
-                TORNA ALLA DASHBOARD
+        <section id="section-tool" class="hidden">
+            <button onclick="showSection('grid')" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-xs font-bold tracking-widest">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Indietro
             </button>
-            
-            <div id="toolWorkspace" class="glass p-10 rounded-[3rem] shadow-2xl border-white/5 relative overflow-hidden">
+            <div id="toolWorkspace" class="glass p-10 rounded-[3rem] shadow-2xl">
                 </div>
         </section>
     </main>
 
     <script src="app.js"></script>
-    <script>
-        // Inizializzazione icone all'avvio
-        window.onload = () => {
-            lucide.createIcons();
-            console.log("DevHub OS: System Ready.");
-        };
-    </script>
 </body>
 </html>
