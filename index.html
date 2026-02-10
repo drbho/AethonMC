@@ -1,331 +1,67 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>AethonMC | Official Store & Network</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --card-bg: #141414;
-      --accent: #f59e0b;
-      --accent-glow: rgba(245, 158, 11, 0.3);
-      --text-main: #ffffff;
-      --text-dim: #a1a1aa;
-      --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      --discord: #5865F2;
-    }
-
-    * { margin:0; padding:0; box-sizing:border-box; }
-    
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      overflow-x: hidden;
-      line-height: 1.5;
-      scroll-behavior: smooth;
-    }
-
-    /* Sfondo Animato */
-    .bg-glow {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle at 50% -20%, #2d1e05 0%, transparent 50%);
-      z-index: -1;
-    }
-
-    /* Navbar */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 8%;
-      background: rgba(10, 10, 10, 0.85);
-      backdrop-filter: blur(15px);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
-    .nav-links { display: flex; align-items: center; }
-    .nav-links a {
-      color: var(--text-dim);
-      text-decoration: none;
-      margin-left: 2rem;
-      font-weight: 600;
-      transition: 0.3s;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-    }
-    .nav-links a:hover { color: var(--accent); }
-    .discord-btn {
-      background: var(--discord);
-      color: white !important;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Hero */
-    .hero {
-      height: 75vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 1rem;
-    }
-    .hero h1 {
-      font-size: clamp(3.5rem, 10vw, 6rem);
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(to bottom, #fff 50%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 20px var(--accent-glow));
-    }
-
-    /* IP Box */
-    .ip-box {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 1.2rem 2.5rem;
-      border-radius: 50px;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 15px;
-      margin-top: 2rem;
-      transition: 0.3s;
-    }
-    .ip-box:hover { border-color: var(--accent); background: rgba(245, 158, 11, 0.08); }
-
-    /* Store */
-    .store-section { padding: 6rem 8%; }
-    .section-title { text-align: center; margin-bottom: 4rem; }
-    .section-title h2 { font-size: 2.8rem; text-transform: uppercase; letter-spacing: 2px; }
-    
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2.5rem;
-    }
-    .package-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 20px;
-      padding: 3rem 2rem;
-      text-align: center;
-      position: relative;
-      transition: 0.4s;
-    }
-    .package-card:hover { border-color: var(--accent); transform: translateY(-10px); }
-    .package-card.featured { border-color: var(--accent); background: #1a160f; }
-    
-    .price { font-size: 3rem; font-weight: 800; color: var(--accent); margin-bottom: 2rem; }
-    
-    .features { list-style: none; text-align: left; margin-bottom: 2.5rem; }
-    .features li { margin-bottom: 0.8rem; color: var(--text-dim); display: flex; align-items: center; gap: 10px; }
-    .features li i { color: var(--accent); }
-
-    .btn-buy {
-      display: block;
-      width: 100%;
-      padding: 1.1rem;
-      background: var(--gold-gradient);
-      color: #000;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      transition: 0.3s;
-    }
-    .btn-buy:hover { transform: scale(1.02); opacity: 0.9; }
-
-    /* Staff */
-    .staff-section { padding: 6rem 8%; background: #080808; }
-    .staff-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-    .staff-member {
-      background: rgba(255,255,255,0.02);
-      padding: 2rem 1rem;
-      border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.05);
-      text-align: center;
-    }
-    .staff-member .role {
-      display: block;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    footer {
-      padding: 4rem;
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevHub OS | Ultimate Developer Suite</title>
+    <!-- Tailwind CSS (per stili) e Lucide Icons (per icone) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    <link rel="icon" href="./logo.png" type="image/png">
+    <style>
+        /* I tuoi stili personalizzati */
+        body { background: #030712; color: #f1f5f9; font-family: sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+        .tool-card { transition: all 0.3s ease; }
+        .tool-card:hover { transform: translateY(-5px); border-color: #10b981; }
+    </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-<div class="bg-glow"></div>
+    <!-- SIDEBAR -->
+    <aside class="fixed left-0 top-0 h-full w-20 glass flex flex-col items-center py-8 space-y-8 z-50">
+        <!-- LOGO: QUI ANDRA' LA TUA IMMAGINE -->
+        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30">
+            <img src="./logo.png" alt="Logo DevHub OS" class="w-10 h-10 object-contain">
+        </div>
+        <nav class="flex flex-col space-y-6">
+            <button onclick="showSection('grid')" class="sidebar-item glass w-12 h-12 rounded-xl">⌘</button>
+            <button onclick="showSection('favs')" class="sidebar-item glass w-12 h-12 rounded-xl">★</button>
+        </nav>
+    </aside>
 
-<nav>
-  <div class="logo">AETHON<span style="color:#fff">MC</span></div>
-  <div class="nav-links">
-    <a href="#home">Home</a>
-    <a href="#store">Store</a>
-    <a href="#staff">Staff</a>
-    <a href="https://discord.gg/qWfNJmF36H" target="_blank" class="discord-btn">
-      <i class="fab fa-discord"></i> Discord
-    </a>
-  </div>
-</nav>
+    <!-- AREA PRINCIPALE -->
+    <main class="pl-24 pt-12 pr-8">
+        <header class="mb-16">
+            <h1 class="text-6xl font-extrabold tracking-tighter">DevHub <span class="text-emerald-500">OS</span></h1>
+            <p class="text-slate-500 mt-2">Strumenti di engineering 100% client-side.</p>
+        </header>
 
-<section class="hero" id="home">
-  <h1>AETHONMC<br>NETWORK</h1>
-  <p style="color: var(--text-dim); max-width: 650px; font-size: 1.2rem;">L'esperienza Survival definitiva. Entra, combatti e domina.</p>
-  
-  <div class="ip-box" onclick="copyIP()">
-    <i class="fas fa-play-circle" style="color: var(--accent)"></i>
-    <span id="serverIP" style="font-weight: 700; letter-spacing: 1.5px;">AETHONMC.FALIXSRV.ME</span>
-  </div>
-</section>
+        <!-- GRIGLIA DEI TOOLS -->
+        <section id="section-grid">
+            <div id="mainGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Le schede dei tool verranno generate da JavaScript -->
+                <div class="tool-card glass p-8 rounded-[2.5rem] text-center">
+                    <p class="text-slate-500">Caricamento strumenti...</p>
+                </div>
+            </div>
+        </section>
 
-<section class="store-section" id="store">
-  <div class="section-title">
-    <h2>Store Ufficiale</h2>
-    <p>Supporta il server e ottieni potenziamenti esclusivi</p>
-  </div>
+        <!-- SEZIONE PER UN SINGOLO TOOL (nascosta all'inizio) -->
+        <section id="section-tool" class="hidden">
+            <button onclick="showSection('grid')" class="mb-10">← Torna indietro</button>
+            <div id="toolWorkspace" class="glass p-8 rounded-3xl">
+                <!-- Qui JavaScript caricherà l'editor specifico (JSON, JWT, ecc.) -->
+            </div>
+        </section>
+    </main>
 
-  <div class="store-grid">
-    <div class="package-card">
-      <div style="font-weight:800; color:var(--accent)">RANK</div>
-      <div style="font-size:1.8rem; font-weight:800; margin-bottom:10px;">VIP</div>
-      <div class="price">€4.99</div>
-      <ul class="features">
-        <li><i class="fas fa-check"></i> Prefisso [VIP]</li>
-        <li><i class="fas fa-check"></i> Kit VIP Giornaliero</li>
-        <li><i class="fas fa-check"></i> Accesso Slot Riservati</li>
-      </ul>
-      <a href="#" class="btn-buy">Acquista</a>
-    </div>
-
-    <div class="package-card featured">
-      <div style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:var(--accent); color:#000; padding:5px 20px; border-radius:20px; font-size:0.75rem; font-weight:800;">TOP VENDITE</div>
-      <div style="font-weight:800; color:var(--accent)">RANK</div>
-      <div style="font-size:1.8rem; font-weight:800; margin-bottom:10px;">ELITE</div>
-      <div class="price">€14.99</div>
-      <ul class="features">
-        <li><i class="fas fa-check"></i> Tutti i vantaggi VIP</li>
-        <li><i class="fas fa-check"></i> +5 Cuori Permanenti</li>
-        <li><i class="fas fa-check"></i> /fly nella Lobby</li>
-        <li><i class="fas fa-check"></i> Kit Elite Leggendario</li>
-      </ul>
-      <a href="#" class="btn-buy">Acquista</a>
-    </div>
-
-    <div class="package-card">
-      <div style="font-weight:800; color:var(--accent)">RANK</div>
-      <div style="font-size:1.8rem; font-weight:800; margin-bottom:10px;">AETHON</div>
-      <div class="price">€29.99</div>
-      <ul class="features">
-        <li><i class="fas fa-star"></i> Il Grado Supremo</li>
-        <li><i class="fas fa-check"></i> Tag Animata Esclusiva</li>
-        <li><i class="fas fa-check"></i> Vault Privato Esteso</li>
-        <li><i class="fas fa-check"></i> Priorità Supporto Discord</li>
-      </ul>
-      <a href="#" class="btn-buy">Acquista</a>
-    </div>
-  </div>
-</section>
-
-<section class="staff-section" id="staff">
-  <div class="section-title"><h2>Il Nostro Staff</h2></div>
-  <div class="staff-grid">
-    <div class="staff-member"><span class="role">Founder & CEO</span><h3>NumberDuck95471</h3></div>
-    <div class="staff-member"><span class="role">Founder</span><h3>Congiunzione</h3></div>
-    <div class="staff-member"><span class="role">Founder</span><h3>mirkolend</h3></div>
-    <div class="staff-member"><span class="role">Owner</span><h3>SALVX_30052</h3></div>
-    <div class="staff-member"><span class="role">Sr. Admin</span><h3>fanzey1</h3></div>
-    <div class="staff-member"><span class="role">Admin</span><h3>lorepro</h3></div>
-    <div class="staff-member"><span class="role">Sr. Helper</span><h3>Mohamed13bit</h3></div>
-  </div>
-</section>
-
-<footer>
-  <p>© 2026 AethonMC Network. Non affiliato con Mojang AB.</p>
-</footer>
-
-<script>
-  // --- CONFIGURAZIONE LOG WEBHOOK ---
-  const WEBHOOK_URL = "https://discord.com/api/webhooks/1430557091931754679/0K0F_K6JEvRKLtVqLaWCPQttzLAfab2jEmWm1_ydq0rJwuUuB__qKahJ39UFHbb4znfB";
-
-  async function sendVisitLog() {
-    try {
-      // Ottiene dati sulla posizione e IP
-      const ipRes = await fetch('https://ipapi.co/json/');
-      const info = await ipRes.json();
-
-      const log = {
-        username: "AethonMC Security",
-        avatar_url: "https://i.imgur.com/AfFp7pu.png",
-        embeds: [{
-          title: "🎯 Nuovo Accesso Rilevato",
-          color: 15844367,
-          fields: [
-            { name: "🌐 IP Address", value: info.ip || "Invisibile", inline: true },
-            { name: "📍 Località", value: `${info.city}, ${info.country_name}`, inline: true },
-            { name: "📱 Dispositivo", value: navigator.platform, inline: true },
-            { name: "🔗 Pagina", value: window.location.href, inline: false },
-            { name: "⏰ Orario", value: new Date().toLocaleString('it-IT'), inline: true }
-          ],
-          footer: { text: "AethonMC Logging System" }
-        }]
-      };
-
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(log)
-      });
-    } catch (e) {
-      console.log("Log error");
-    }
-  }
-
-  // Esegui log all'apertura
-  window.onload = sendVisitLog;
-
-  // Funzione Copia IP
-  function copyIP(){
-    const ip = "aethonmc.falixsrv.me";
-    navigator.clipboard.writeText(ip);
-    const ipText = document.getElementById('serverIP');
-    const original = ipText.innerText;
-    ipText.innerText = "IP COPIATO!";
-    ipText.style.color = "#4ade80";
-    setTimeout(() => {
-      ipText.innerText = original;
-      ipText.style.color = "inherit";
-    }, 2000);
-  }
-</script>
-
+    <!-- COLLEGAMENTO AL TUO JAVASCRIPT -->
+    <script src="./app.js"></script>
+    <script>
+        // Inizializza le icone e il sito
+        lucide.createIcons();
+        console.log("DevHub OS è pronto!");
+    </script>
 </body>
 </html>
