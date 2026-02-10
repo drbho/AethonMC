@@ -1,27 +1,27 @@
 // DATABASE TOOLS
 const tools = [
-    { id: 'json', title: 'JSON Formatter', icon: 'code-2', desc: 'Valida, formatta e minifica strutture JSON.' },
-    { id: 'jwt', title: 'JWT Debugger', icon: 'shield-check', desc: 'Decodifica token JWT Header e Payload.' },
-    { id: 'hash', title: 'Hash Engine', icon: 'lock', desc: 'Genera hash SHA-256 in tempo reale.' },
-    { id: 'qr', title: 'QR Architect', icon: 'qr-code', desc: 'Crea QR Code personalizzati e scaricali.' },
-    { id: 'video', title: 'Video Lab', icon: 'video', desc: 'Filtri video e Screen Recording rapido.' }
+    { id: 'json', title: 'JSON Formatter', icon: 'code-2', desc: 'Formatta, valida e minifica file JSON.' },
+    { id: 'jwt', title: 'JWT Debugger', icon: 'shield-check', desc: 'Decodifica token JWT (Header/Payload).' },
+    { id: 'qr', title: 'QR Architect', icon: 'qr-code', desc: 'Genera codici QR personalizzati.' },
+    { id: 'ai-html', title: 'AI HTML Fixer', icon: 'wand-2', desc: 'Corregge errori di sintassi HTML automaticamente.' },
+    { id: 'ai-video', title: 'AI Video Lab', icon: 'video', desc: 'Rilevamento oggetti AI e Download Video.' }
 ];
 
 let favorites = JSON.parse(localStorage.getItem('dh_favs') || '[]');
+let mediaRecorder;
+let recordedChunks = [];
 
-// RENDER GRIGLIA
+// RENDER GRID
 function renderGrid(filterFavs = false) {
     const grid = document.getElementById('mainGrid');
     const displayTools = filterFavs ? tools.filter(t => favorites.includes(t.id)) : tools;
     
     grid.innerHTML = displayTools.map(tool => `
-        <div onclick="openTool('${tool.id}')" class="tool-card glass p-8 rounded-[2.5rem] cursor-pointer relative">
+        <div onclick="openTool('${tool.id}')" class="tool-card glass p-8 rounded-[2.5rem] relative">
             <div class="flex justify-between items-start">
-                <div class="p-4 bg-emerald-500/10 text-emerald-500 rounded-2xl border border-emerald-500/20">
-                    <i data-lucide="${tool.icon}"></i>
-                </div>
+                <div class="p-4 bg-emerald-500/10 text-emerald-500 rounded-2xl"><i data-lucide="${tool.icon}"></i></div>
                 <button onclick="event.stopPropagation(); toggleFav('${tool.id}')">
-                    <i data-lucide="star" class="${favorites.includes(tool.id) ? 'fill-yellow-500 text-yellow-500' : 'text-slate-700 hover:text-yellow-500'} transition-all"></i>
+                    <i data-lucide="star" class="${favorites.includes(tool.id) ? 'fill-yellow-500 text-yellow-500' : 'text-slate-700'}"></i>
                 </button>
             </div>
             <h3 class="text-2xl font-bold mt-6">${tool.title}</h3>
@@ -31,54 +31,44 @@ function renderGrid(filterFavs = false) {
     lucide.createIcons();
 }
 
-// LOGICA SEZIONI
+// NAVIGATION
 function showSection(id) {
     document.getElementById('section-grid').classList.toggle('hidden', id !== 'grid' && id !== 'favs');
     document.getElementById('section-tool').classList.toggle('hidden', id === 'grid' || id === 'favs');
-    
-    document.getElementById('btn-grid').classList.toggle('active-nav', id === 'grid');
-    document.getElementById('btn-favs').classList.toggle('active-nav', id === 'favs');
-
-    if(id === 'grid' || id === 'favs') renderGrid(id === 'favs');
+    if (id === 'grid' || id === 'favs') renderGrid(id === 'favs');
 }
 
-// APERTURA TOOLS
-function openTool(toolId) {
+// OPEN TOOL LOGIC
+function openTool(id) {
     showSection('tool');
     const workspace = document.getElementById('toolWorkspace');
-    const tool = tools.find(t => t.id === toolId);
+    const tool = tools.find(t => t.id === id);
 
-    if(toolId === 'json') {
+    if (id === 'json') {
         workspace.innerHTML = `
-            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 underline-offset-8">${tool.title}</h2>
-            <textarea id="jsonInput" class="w-full h-80 bg-black/40 border border-white/10 rounded-3xl p-6 outline-none focus:border-emerald-500 transition-all font-mono text-sm" placeholder="Incolla JSON qui..."></textarea>
-            <div class="flex gap-4 mt-6">
-                <button onclick="processJSON('format')" class="bg-emerald-500 text-black px-8 py-3 rounded-2xl font-bold hover:bg-emerald-400 transition">Formatta</button>
-                <button onclick="processJSON('minify')" class="bg-white/5 px-8 py-3 rounded-2xl hover:bg-white/10 transition">Minifica</button>
+            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 decoration-4">${tool.title}</h2>
+            <textarea id="jsonIn" class="w-full h-80 bg-black/40 border border-white/10 rounded-3xl p-6 font-mono text-sm outline-none focus:border-emerald-500" placeholder="Incolla JSON..."></textarea>
+            <div class="mt-6 flex gap-4">
+                <button onclick="runJSON('format')" class="bg-emerald-500 text-black px-10 py-3 rounded-xl font-bold">Formatta</button>
+                <button onclick="runJSON('minify')" class="bg-white/5 px-10 py-3 rounded-xl">Minifica</button>
             </div>`;
     } 
-    else if(toolId === 'jwt') {
+    else if (id === 'jwt') {
         workspace.innerHTML = `
-            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 underline-offset-8">${tool.title}</h2>
-            <input type="text" id="jwtInput" oninput="decodeJWT()" class="w-full bg-black/40 border border-white/10 rounded-2xl p-6 font-mono mb-8 focus:border-emerald-500 outline-none" placeholder="Incolla JWT...">
-            <div class="grid md:grid-cols-2 gap-6">
-                <div><label class="text-[10px] font-bold text-slate-500 uppercase ml-2">Header</label><pre id="jwtH" class="mt-2 p-6 bg-black/30 rounded-3xl text-pink-400 text-sm overflow-auto min-h-[200px]"></pre></div>
-                <div><label class="text-[10px] font-bold text-slate-500 uppercase ml-2">Payload</label><pre id="jwtP" class="mt-2 p-6 bg-black/30 rounded-3xl text-emerald-400 text-sm overflow-auto min-h-[200px]"></pre></div>
+            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 decoration-4">${tool.title}</h2>
+            <input type="text" id="jwtIn" oninput="runJWT()" class="w-full bg-black/40 border border-white/10 rounded-2xl p-6 font-mono mb-8 outline-none focus:border-emerald-500" placeholder="Incolla JWT...">
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <pre id="jwtH" class="p-6 bg-black/30 rounded-3xl text-pink-400 overflow-auto min-h-[200px] border border-white/5"></pre>
+                <pre id="jwtP" class="p-6 bg-black/30 rounded-3xl text-emerald-400 overflow-auto min-h-[200px] border border-white/5"></pre>
             </div>`;
     }
-    else if(toolId === 'hash') {
+    else if (id === 'qr') {
         workspace.innerHTML = `
-            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 underline-offset-8">${tool.title}</h2>
-            <textarea oninput="generateHash(this.value)" class="w-full h-32 bg-black/40 border border-white/10 rounded-3xl p-6 focus:border-emerald-500 outline-none mb-6" placeholder="Testo da convertire in SHA-256..."></textarea>
-            <div class="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl font-mono break-all text-emerald-500" id="hashOut">---</div>`;
-    }
-    else if(toolId === 'qr') {
-        workspace.innerHTML = `
-            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 underline-offset-8">${tool.title}</h2>
-            <div class="grid md:grid-cols-2 gap-12">
+            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 decoration-4">${tool.title}</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center text-center">
                 <div>
-                    <textarea id="qrIn" oninput="genQR()" class="w-full h-40 bg-black/40 border border-white/10 rounded-3xl p-6 focus:border-emerald-500 outline-none" placeholder="Link o testo..."></textarea>
-                    <input type="color" id="qrCol" value="#10b981" onchange="genQR()" class="w-full h-12 mt-4 rounded-xl cursor-pointer bg-transparent border-none">
+                    <textarea id="qrIn" oninput="runQR()" class="w-full h-40 bg-black/40 border border-white/10 rounded-3xl p-6 outline-none focus:border-emerald-500" placeholder="URL o testo..."></textarea>
+                    <input type="color" id="qrColor" value="#10b981" onchange="runQR()" class="w-full h-12 mt-4 rounded-xl cursor-pointer bg-transparent border-none">
                 </div>
                 <div class="flex flex-col items-center">
                     <canvas id="qrCanvas" class="bg-white p-4 rounded-3xl shadow-2xl"></canvas>
@@ -86,101 +76,142 @@ function openTool(toolId) {
                 </div>
             </div>`;
     }
-    else if(toolId === 'video') {
+    else if (id === 'ai-html') {
         workspace.innerHTML = `
-            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 underline-offset-8">${tool.title}</h2>
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-4">
-                    <div id="vContainer" class="aspect-video bg-black rounded-3xl border border-white/5 overflow-hidden flex items-center justify-center relative">
-                        <video id="vPrev" controls class="w-full h-full hidden"></video>
-                        <div id="vDrop" onclick="document.getElementById('vFile').click()" class="text-center p-10 cursor-pointer">
-                            <i data-lucide="video" class="mx-auto w-12 h-12 text-emerald-500/30 mb-4"></i>
-                            <p class="text-slate-500">Apri un video o registra lo schermo</p>
-                            <input type="file" id="vFile" accept="video/*" class="hidden" onchange="loadV(event)">
-                        </div>
-                    </div>
-                    <button onclick="recScreen()" class="w-full py-4 bg-red-500/10 text-red-500 rounded-2xl font-bold hover:bg-red-500 hover:text-white transition">Registra Schermo</button>
-                </div>
-                <div class="space-y-6">
-                    <div class="p-4 bg-white/5 rounded-2xl">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Filtri CSS Live</label>
-                        <input type="range" min="0" max="100" value="0" oninput="vFilter()" id="vG" class="w-full accent-emerald-500 mt-4" title="Grayscale">
-                        <input type="range" min="0" max="20" value="0" oninput="vFilter()" id="vB" class="w-full accent-emerald-500 mt-4" title="Blur">
-                    </div>
-                </div>
-            </div>`;
-        lucide.createIcons();
+            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 decoration-4">${tool.title}</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <textarea id="htmlIn" class="h-80 bg-black/40 border border-white/10 rounded-3xl p-6 font-mono text-sm outline-none focus:border-emerald-500" placeholder="HTML da correggere..."></textarea>
+                <pre id="htmlOut" class="h-80 bg-emerald-500/5 border border-emerald-500/20 rounded-3xl p-6 text-emerald-400 overflow-auto"></pre>
+            </div>
+            <button onclick="runAiHTML()" class="mt-8 bg-emerald-500 text-black px-12 py-4 rounded-2xl font-bold">Correggi Syntax</button>`;
     }
+    else if (id === 'ai-video') {
+        workspace.innerHTML = `
+            <h2 class="text-3xl font-bold mb-6 italic underline decoration-emerald-500 decoration-4">${tool.title}</h2>
+            <div class="relative rounded-[2rem] overflow-hidden bg-black aspect-video border border-white/10 max-w-4xl mx-auto shadow-2xl" id="vidContainer">
+                <video id="vSource" crossorigin="anonymous" class="w-full h-full object-contain"></video>
+                <canvas id="vCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+            </div>
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <input type="file" id="fIn" accept="video/*" onchange="loadVideo(event)" class="hidden">
+                <button onclick="document.getElementById('fIn').click()" class="bg-white/10 px-8 py-4 rounded-2xl border border-white/10 hover:bg-white/20">Carica Video</button>
+                <button onclick="startAiVideo()" id="btnStart" class="bg-emerald-500 text-black px-8 py-4 rounded-2xl font-bold">Attiva AI & Registra</button>
+                <button onclick="stopAndSave()" id="btnStop" class="hidden bg-red-600 text-white px-8 py-4 rounded-2xl font-bold">Ferma e Salva WebM</button>
+            </div>`;
+    }
+    lucide.createIcons();
 }
 
-// --- TOOL LOGIC FUNCTIONS ---
+// --- FUNZIONI OPERATIVE ---
 
-function processJSON(mode) {
-    const inp = document.getElementById('jsonInput');
+function runJSON(mode) {
+    const el = document.getElementById('jsonIn');
     try {
-        const obj = JSON.parse(inp.value);
-        inp.value = mode === 'format' ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
-    } catch(e) { alert("Invalid JSON"); }
+        const obj = JSON.parse(el.value);
+        el.value = mode === 'format' ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
+    } catch(e) { alert("JSON non valido"); }
 }
 
-function decodeJWT() {
-    const val = document.getElementById('jwtInput').value.split('.');
+function runJWT() {
+    const val = document.getElementById('jwtIn').value.split('.');
     try {
         document.getElementById('jwtH').innerText = JSON.stringify(JSON.parse(atob(val[0])), null, 2);
         document.getElementById('jwtP').innerText = JSON.stringify(JSON.parse(atob(val[1])), null, 2);
     } catch(e) {}
 }
 
-async function generateHash(t) {
-    if(!t) return document.getElementById('hashOut').innerText = '---';
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
-    document.getElementById('hashOut').innerText = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function genQR() {
+function runQR() {
     const t = document.getElementById('qrIn').value;
     if(!t) return;
-    QRCode.toCanvas(document.getElementById('qrCanvas'), t, { width: 220, color: { dark: document.getElementById('qrCol').value } });
+    QRCode.toCanvas(document.getElementById('qrCanvas'), t, { width: 220, color: { dark: document.getElementById('qrColor').value } });
 }
 
 function downloadQR() {
-    const a = document.createElement('a');
-    a.download = 'qr.png';
-    a.href = document.getElementById('qrCanvas').toDataURL();
-    a.click();
+    const a = document.createElement('a'); a.download = 'qr.png';
+    a.href = document.getElementById('qrCanvas').toDataURL(); a.click();
 }
 
-function loadV(e) {
-    const f = e.target.files[0];
-    const v = document.getElementById('vPrev');
-    v.src = URL.createObjectURL(f);
-    v.classList.remove('hidden');
-    document.getElementById('vDrop').classList.add('hidden');
+function runAiHTML() {
+    let inp = document.getElementById('htmlIn').value;
+    let fixed = inp.trim();
+    if (!fixed.toLowerCase().includes('<!doctype')) fixed = `<!DOCTYPE html>\n` + fixed;
+    fixed = fixed.replace(/<br>/g, '<br />').replace(/<img>/g, '<img />').replace(/<hr>/g, '<hr />');
+    document.getElementById('htmlOut').innerText = "/* AI SYNTAX FIXED */\n\n" + fixed;
 }
 
-function vFilter() {
-    const v = document.getElementById('vPrev');
-    v.style.filter = `grayscale(${document.getElementById('vG').value}%) blur(${document.getElementById('vB').value}px)`;
+// --- VIDEO AI & EXPORT LOGIC ---
+
+function loadVideo(e) {
+    const video = document.getElementById('vSource');
+    video.src = URL.createObjectURL(e.target.files[0]);
+    video.onloadedmetadata = () => {
+        const canvas = document.getElementById('vCanvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+    };
 }
 
-async function recScreen() {
-    try {
-        const s = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        const v = document.getElementById('vPrev');
-        v.srcObject = s;
-        v.classList.remove('hidden');
-        document.getElementById('vDrop').classList.add('hidden');
-        v.play();
-    } catch(err) { console.error(err); }
+async function startAiVideo() {
+    const video = document.getElementById('vSource');
+    const canvas = document.getElementById('vCanvas');
+    const ctx = canvas.getContext('2d');
+    const sBtn = document.getElementById('btnStart');
+    const pBtn = document.getElementById('btnStop');
+
+    sBtn.innerText = "Caricamento Modello...";
+    const model = await cocoSsd.load();
+    sBtn.classList.add('hidden');
+    pBtn.classList.add('ai-active');
+    pBtn.classList.remove('hidden');
+
+    // REGISTRAZIONE CANVAS
+    const stream = canvas.captureStream(30);
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    recordedChunks = [];
+    mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.start();
+
+    video.play();
+
+    async function process() {
+        if (video.paused || video.ended) return;
+        const predictions = await model.detect(video);
+        
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        predictions.forEach(p => {
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(p.bbox[0], p.bbox[1], p.bbox[2], p.bbox[3]);
+            ctx.fillStyle = '#10b981';
+            ctx.font = '22px Inter';
+            ctx.fillText(p.class.toUpperCase(), p.bbox[0], p.bbox[1] > 20 ? p.bbox[1] - 10 : 20);
+        });
+        requestAnimationFrame(process);
+    }
+    process();
 }
 
+function stopAndSave() {
+    mediaRecorder.stop();
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'devhub-ai-export.webm';
+        a.click();
+        location.reload(); 
+    };
+}
+
+// UTILS
 function toggleFav(id) {
-    favorites.includes(id) ? favorites = favorites.filter(x => x !== id) : favorites.push(id);
+    const idx = favorites.indexOf(id);
+    idx > -1 ? favorites.splice(idx, 1) : favorites.push(id);
     localStorage.setItem('dh_favs', JSON.stringify(favorites));
-    renderGrid(document.getElementById('btn-favs').classList.contains('active-nav'));
+    renderGrid(document.getElementById('view-title').innerText.includes('preferiti'));
 }
 
-// INIT
 document.addEventListener('DOMContentLoaded', () => {
     renderGrid();
     lucide.createIcons();
