@@ -3,86 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevHub OS | Ultimate Developer Suite</title>
+    <title>DevHub OS | AI & Engineering Suite</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
-
-        body { 
-            background: #030712; 
-            color: #f1f5f9; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-        }
-
-        .glass { 
-            background: rgba(15, 23, 42, 0.6); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255,255,255,0.08); 
-        }
-
-        .tool-card { 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-
-        .tool-card:hover { 
-            transform: translateY(-8px); 
-            border-color: #10b981; 
-            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.15); 
-        }
-
-        /* Scrollbar Custom */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
-
+        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+        .tool-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .tool-card:hover { transform: translateY(-5px); border-color: #10b981; box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.2); }
         pre, textarea, code { font-family: 'Fira Code', monospace !important; }
-        
-        .active-nav { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .ai-active { animation: glow 2s infinite; border-color: #10b981; }
+        @keyframes glow { 0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); } 50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); } 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); } }
     </style>
 </head>
 <body class="min-h-screen">
 
     <aside class="fixed left-0 top-0 h-full w-20 glass flex flex-col items-center py-8 space-y-10 z-50">
         <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30">
-            <img src="logo.png" alt="DevHub Logo" class="w-9 h-9 object-contain">
+            <img src="logo.png" alt="DH" class="w-9 h-9 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-emerald-500 font-bold\'>DH</span>'">
         </div>
-        
-        <nav class="flex flex-col space-y-4">
-            <button onclick="showSection('grid')" id="btn-grid" class="p-3 rounded-xl text-slate-400 hover:text-emerald-500 transition-all active-nav">
-                <i data-lucide="layout-grid"></i>
-            </button>
-            <button onclick="showSection('favs')" id="btn-favs" class="p-3 rounded-xl text-slate-400 hover:text-yellow-500 transition-all">
-                <i data-lucide="star"></i>
-            </button>
+        <nav class="flex flex-col space-y-6 text-slate-400 font-bold">
+            <button onclick="showSection('grid')" class="hover:text-emerald-500 transition-all"><i data-lucide="layout-grid"></i></button>
+            <button onclick="showSection('favs')" class="hover:text-yellow-500 transition-all"><i data-lucide="star"></i></button>
         </nav>
     </aside>
 
     <main class="pl-28 pt-12 pr-10 pb-20">
         <header class="mb-16">
-            <div class="flex items-center gap-4">
-                <h1 class="text-6xl font-extrabold tracking-tighter italic">DevHub <span class="text-emerald-500 not-italic">OS</span></h1>
-                <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full text-xs font-bold uppercase tracking-widest">v1.2</span>
-            </div>
-            <p id="view-title" class="text-slate-500 mt-4 text-xl">Engineering suite 100% client-side.</p>
+            <h1 class="text-6xl font-extrabold tracking-tighter">DevHub <span class="text-emerald-500 italic">OS</span></h1>
+            <p id="view-title" class="text-slate-500 mt-4 text-xl font-light italic tracking-wide">Professional Toolset con Integrazione AI Locale.</p>
         </header>
 
         <section id="section-grid">
-            <div id="mainGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                </div>
+            <div id="mainGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
         </section>
 
         <section id="section-tool" class="hidden">
-            <button onclick="showSection('grid')" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors uppercase text-xs font-bold tracking-widest">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Indietro
+            <button onclick="showSection('grid')" class="mb-8 flex items-center gap-2 text-slate-500 hover:text-white transition-all uppercase text-xs font-bold tracking-widest">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Torna alla Dashboard
             </button>
-            <div id="toolWorkspace" class="glass p-10 rounded-[3rem] shadow-2xl">
-                </div>
+            <div id="toolWorkspace" class="glass p-10 rounded-[3rem] shadow-2xl min-h-[600px] relative"></div>
         </section>
     </main>
 
