@@ -4,64 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevHub OS | Ultimate Developer Suite</title>
-    <!-- Tailwind CSS (per stili) e Lucide Icons (per icone) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
-    <link rel="icon" href="./logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
-        /* I tuoi stili personalizzati */
-        body { background: #030712; color: #f1f5f9; font-family: sans-serif; }
+        body { background: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-        .tool-card { transition: all 0.3s ease; }
-        .tool-card:hover { transform: translateY(-5px); border-color: #10b981; }
+        .tool-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tool-card:hover { transform: translateY(-5px); border-color: #10b981; box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- SIDEBAR -->
     <aside class="fixed left-0 top-0 h-full w-20 glass flex flex-col items-center py-8 space-y-8 z-50">
-        <!-- LOGO: QUI ANDRA' LA TUA IMMAGINE -->
         <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30">
-            <img src="./logo.png" alt="Logo DevHub OS" class="w-10 h-10 object-contain">
+            <span class="text-emerald-500 font-bold text-xl">DH</span>
         </div>
         <nav class="flex flex-col space-y-6">
-            <button onclick="showSection('grid')" class="sidebar-item glass w-12 h-12 rounded-xl">⌘</button>
-            <button onclick="showSection('favs')" class="sidebar-item glass w-12 h-12 rounded-xl">★</button>
+            <button onclick="showSection('grid')" class="hover:text-emerald-500 transition-colors p-3 rounded-xl hover:bg-emerald-500/10">
+                <i data-lucide="layout-grid"></i>
+            </button>
+            <button onclick="showSection('favs')" class="hover:text-yellow-500 transition-colors p-3 rounded-xl hover:bg-yellow-500/10">
+                <i data-lucide="star"></i>
+            </button>
         </nav>
     </aside>
 
-    <!-- AREA PRINCIPALE -->
-    <main class="pl-24 pt-12 pr-8">
-        <header class="mb-16">
+    <main class="pl-24 pt-12 pr-8 pb-12">
+        <header class="mb-12">
             <h1 class="text-6xl font-extrabold tracking-tighter">DevHub <span class="text-emerald-500">OS</span></h1>
-            <p class="text-slate-500 mt-2">Strumenti di engineering 100% client-side.</p>
+            <p id="view-title" class="text-slate-500 mt-2 text-lg">Strumenti di engineering 100% client-side.</p>
         </header>
 
-        <!-- GRIGLIA DEI TOOLS -->
         <section id="section-grid">
-            <div id="mainGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Le schede dei tool verranno generate da JavaScript -->
-                <div class="tool-card glass p-8 rounded-[2.5rem] text-center">
-                    <p class="text-slate-500">Caricamento strumenti...</p>
+            <div id="mainGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 </div>
-            </div>
         </section>
 
-        <!-- SEZIONE PER UN SINGOLO TOOL (nascosta all'inizio) -->
         <section id="section-tool" class="hidden">
-            <button onclick="showSection('grid')" class="mb-10">← Torna indietro</button>
-            <div id="toolWorkspace" class="glass p-8 rounded-3xl">
-                <!-- Qui JavaScript caricherà l'editor specifico (JSON, JWT, ecc.) -->
-            </div>
+            <button onclick="showSection('grid')" class="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Torna alla Dashboard
+            </button>
+            <div id="toolWorkspace" class="glass p-8 rounded-[2.5rem]">
+                </div>
         </section>
     </main>
 
-    <!-- COLLEGAMENTO AL TUO JAVASCRIPT -->
     <script src="./app.js"></script>
-    <script>
-        // Inizializza le icone e il sito
-        lucide.createIcons();
-        console.log("DevHub OS è pronto!");
-    </script>
 </body>
 </html>
