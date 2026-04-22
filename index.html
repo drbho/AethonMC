@@ -3,56 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevHub OS | AI & Engineering Suite</title>
+    <title>DevHub - Build 0x44 (Engine)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
-        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
-        .tool-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .tool-card:hover { transform: translateY(-5px); border-color: #10b981; box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.2); }
-        pre, textarea, code { font-family: 'Fira Code', monospace !important; }
-        .ai-active { animation: glow 2s infinite; border-color: #10b981; }
-        @keyframes glow { 0% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); } 50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); } 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); } }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Outfit:wght@300;900&display=swap');
+        
+        /* Forza il dark mode sempre, non mi fido di tailwind oggi */
+        :root {
+            --gh-green: #10b981;
+            --main-dark: #020617;
+            --blur-bg: rgba(15, 23, 42, 0.4);
+        }
+
+        body { 
+            background: var(--main-dark); 
+            color: #94a3b8; /* Un po' più spento del solito */
+            font-family: 'Outfit', -apple-system, sans-serif;
+        }
+
+        /* Hack per il blur su Safari che rompe sempre */
+        .glass-pane { 
+            background: var(--blur-bg);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .shadow-hyper {
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.02), 0 30px 60px -12px rgba(0,0,0,0.6);
+        }
+
+        .shadow-hyper:hover {
+            border-color: var(--gh-green);
+            transform: translateY(-2px);
+        }
+
+        /* Roba per il testo tecnico */
+        .terminal-text { 
+            font-family: 'JetBrains Mono', monospace !important; 
+            font-size: 0.82rem;
+            opacity: 0.8;
+        }
+
+        /* Animazione inutile ma bella */
+        @keyframes pulse-line {
+            0% { transform: scaleX(0); opacity: 0; }
+            50% { transform: scaleX(1); opacity: 0.5; }
+            100% { transform: scaleX(0); opacity: 0; }
+        }
+        .active-marker::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gh-green);
+            animation: pulse-line 2s infinite;
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="selection:bg-emerald-500/30">
 
-    <aside class="fixed left-0 top-0 h-full w-20 glass flex flex-col items-center py-8 space-y-10 z-50">
-        <div class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center bg-emerald-500/10 border border-emerald-500/30">
-            <img src="logo.png" alt="DH" class="w-9 h-9 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-emerald-500 font-bold\'>DH</span>'">
+    <aside class="fixed left-5 top-5 bottom-5 w-20 glass-pane rounded-[2.5rem] flex flex-col items-center py-12 z-50 overflow-hidden">
+        <div class="mb-16">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center rotate-3 hover:rotate-0 transition-transform cursor-pointer">
+                <span class="text-black font-black text-lg">D</span>
+            </div>
         </div>
-        <nav class="flex flex-col space-y-6 text-slate-400 font-bold">
-            <button onclick="showSection('grid')" class="hover:text-emerald-500 transition-all"><i data-lucide="layout-grid"></i></button>
-            <button onclick="showSection('favs')" class="hover:text-yellow-500 transition-all"><i data-lucide="star"></i></button>
+        
+        <nav class="flex flex-col gap-10 text-slate-500">
+            <button id="btn-dash" onclick="router.go('dashboard')" class="relative hover:text-white transition-colors">
+                <i data-lucide="layout-grid" class="w-6 h-6"></i>
+            </button>
+            <button id="btn-labs" onclick="router.go('labs')" class="relative hover:text-yellow-400 transition-colors">
+                <i data-lucide="beaker" class="w-6 h-6"></i>
+            </button>
         </nav>
+
+        <div class="mt-auto opacity-20 hover:opacity-100 transition-opacity">
+            <i data-lucide="terminal" class="w-5 h-5"></i>
+        </div>
     </aside>
 
-    <main class="pl-28 pt-12 pr-10 pb-20">
-        <header class="mb-16">
-            <h1 class="text-6xl font-extrabold tracking-tighter">DevHub <span class="text-emerald-500 italic">OS</span></h1>
-            <p id="view-title" class="text-slate-500 mt-4 text-xl font-light italic tracking-wide">Professional Toolset con Integrazione AI Locale.</p>
-        </header>
+    <main class="ml-32 pt-24 pr-8 pb-32">
+        <div id="view-dashboard" class="max-w-6xl">
+            <div class="flex items-end gap-3 mb-4">
+                <span class="text-emerald-500 font-mono text-xs">LOCAL_HOST // 0.0.1</span>
+            </div>
+            <h1 class="text-8xl font-black text-white tracking-tighter leading-none mb-10">
+                DevHub<span class="opacity-10">/</span><span class="text-emerald-500">os</span>
+            </h1>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-pane p-8 rounded-3xl shadow-hyper cursor-pointer group" onclick="router.go('labs')">
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:bg-emerald-500/10 transition-colors">
+                        <i data-lucide="cpu" class="w-6 h-6 text-emerald-500"></i>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-2">Neural Engine</h3>
+                    <p class="text-sm opacity-50 leading-relaxed italic">Inizializza i modelli locali in TensorFlow...</p>
+                </div>
+            </div>
+        </div>
 
-        <section id="section-grid">
-            <div id="mainGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
-        </section>
-
-        <section id="section-tool" class="hidden">
-            <button onclick="showSection('grid')" class="mb-8 flex items-center gap-2 text-slate-500 hover:text-white transition-all uppercase text-xs font-bold tracking-widest">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Torna alla Dashboard
-            </button>
-            <div id="toolWorkspace" class="glass p-10 rounded-[3rem] shadow-2xl min-h-[600px] relative"></div>
-        </section>
+        <div id="view-labs" class="hidden max-w-6xl">
+            <div class="flex items-center gap-4 mb-12">
+                <button onclick="router.go('dashboard')" class="text-xs font-black uppercase tracking-tighter hover:text-emerald-500 flex items-center gap-1">
+                    <i data-lucide="arrow-left-circle" class="w-4 h-4"></i> Torna indietro
+                </button>
+            </div>
+            
+            <div class="glass-pane p-16 rounded-[4rem] shadow-hyper min-h-[500px]">
+                <div class="terminal-text text-emerald-500 mb-4 animate-pulse">> sudo service devhub_ai start</div>
+                <div class="w-full h-px bg-white/5 mb-8"></div>
+                <p class="text-2xl font-light text-slate-400">Area di test per l'ingegneria prompt e suite AI.</p>
+            </div>
+        </div>
     </main>
 
-    <script src="app.js"></script>
+    <script>
+        // Inizializzazione icone
+        lucide.createIcons();
+
+        // Router iper-semplice fatto a mano perché non volevo caricare librerie esterne
+        const router = {
+            go: function(dest) {
+                const dash = document.getElementById('view-dashboard');
+                const labs = document.getElementById('view-labs');
+                
+                if(dest === 'dashboard') {
+                    dash.style.display = 'block';
+                    labs.style.display = 'none';
+                    console.log('Navigating to root...');
+                } else {
+                    dash.style.display = 'none';
+                    labs.style.display = 'block';
+                    console.log('Mounting /labs context...');
+                }
+            }
+        };
+
+        // Fix veloce per l'altezza su mobile
+        window.addEventListener('resize', () => {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        });
+    </script>
 </body>
-</html>
+    </html>
+            
